@@ -4,11 +4,14 @@
 		_MainTex("Main Texture",2D) = "white"{}
 	}
 		SubShader{
-		Tags{ "RenderType" = "Opaque" "Queue" = "Geometry+1" }
-			Pass{
+		Tags{ "Queue" = "Geometry-1" }
+		ColorMask 0 // Don't write to any colour channels
+		ZWrite Off // Don't write to the Depth buffer
+			Pass
+		{
 				Stencil{
-					Ref 2
-					Comp always
+					Ref 1
+					Comp Always
 					Pass replace
 				}
 			
@@ -37,26 +40,13 @@
 				float4 col : COLOR;
 				float2 texcoord: TEXCOORD0;
 			};
+			 
 
 			vertexOutput vert(vertexInput v) {
 				vertexOutput o;
-
-				//float3 normalDirection = normalize ( mul(float4(v.normal,0.0), _World2Object).xyz);
 				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
-				o.texcoord = v.texcoord;
-				//o.pos = UnityObjectToClipPos(v.vertex);
-				//o.normal = mul(float4(v.normal, 0.0), _World2Object).xyz;
-				
-			//	float3 lightDirection;
-			//	float atten = 1.0;
-
-				//lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-
-				//mix color of object and lights
-				//float3 diffuseReflection = atten * _LightColor0.xyz *_Color.rgb * max(0.0, dot(normalDirection, lightDirection));
-
-				//o.col = float4(diffuseReflection, 1.0);
-				//o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				//o.texcoord = v.texcoord;
+				o.col = _Color;
 				return o;
 			}
 
@@ -65,16 +55,14 @@
 			float4 frag(vertexOutput i):SV_Target
 			{
 
-			fixed4 texColor = tex2D(_MainTex,i.texcoord);
-			//float3 normalDirection = normalize(i.normal);
-			//float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
-			//float3 diffuse = _LightColor0.rgb* max(0.0, dot(normalDirection,lightDirection));
-			return half4(1, 0, 0, 1);
-			//return _Color * texColor *float4(diffuse,1);
+				fixed4 texColor = tex2D(_MainTex,i.texcoord);
+
+			//return half4(1, 0, 0, 1);
+				return _Color; //* texColor *float4(diffuse,1);
 			}
 
 			ENDCG
-
+			
 
 			}
 			
