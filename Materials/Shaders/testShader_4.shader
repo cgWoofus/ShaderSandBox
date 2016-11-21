@@ -49,7 +49,7 @@
 			//clip(texcolor.a -.001);
 			return texcolor;
 		}
-		//Fallback "Diffuse"
+		////Fallback "Diffuse"
 		ENDCG
 
 			}
